@@ -1,0 +1,214 @@
+{
+	"locale": "en-US",
+	"tools": [
+		{
+			"id": "pet-dressup",
+			"kind": "image",
+			"name": "Pet Dress-Up",
+			"description": "See any outfit on your pet — no photoshoot needed.",
+			"requires": {
+				"products": 1,
+				"models": 1
+			},
+			"qualities": [
+				{
+					"id": "low",
+					"credits": 6
+				},
+				{
+					"id": "medium",
+					"credits": 18
+				},
+				{
+					"id": "high",
+					"credits": 49
+				}
+			],
+			"ratios": [
+				{
+					"id": "auto"
+				},
+				{
+					"id": "1:1",
+					"size": "1024x1024"
+				},
+				{
+					"id": "3:4",
+					"size": "1024x1536"
+				},
+				{
+					"id": "9:16",
+					"size": "1024x1536"
+				}
+			],
+			"counts": [1, 2, 3, 4],
+			"enhance": false
+		},
+		{
+			"id": "background-swap",
+			"kind": "image",
+			"name": "Scene Swap",
+			"description": "Drop the product or model into any scene — no backdrop to build.",
+			"requires": {
+				"products": 0,
+				"models": 1
+			},
+			"qualities": [
+				{
+					"id": "low",
+					"credits": 4
+				},
+				{
+					"id": "medium",
+					"credits": 16
+				},
+				{
+					"id": "high",
+					"credits": 47
+				}
+			],
+			"ratios": [
+				{
+					"id": "auto"
+				},
+				{
+					"id": "1:1",
+					"size": "1024x1024"
+				},
+				{
+					"id": "3:4",
+					"size": "1024x1536"
+				},
+				{
+					"id": "9:16",
+					"size": "1024x1536"
+				}
+			],
+			"counts": [1, 2, 3, 4],
+			"enhance": true
+		},
+		{
+			"id": "flat-to-3d",
+			"kind": "image",
+			"name": "Flat to 3D",
+			"description": "Stand a flat-laid garment up into a worn, three-dimensional shot.",
+			"requires": {
+				"products": 1,
+				"models": 0
+			},
+			"qualities": [
+				{
+					"id": "low",
+					"credits": 4
+				},
+				{
+					"id": "medium",
+					"credits": 16
+				},
+				{
+					"id": "high",
+					"credits": 47
+				}
+			],
+			"ratios": [
+				{
+					"id": "auto"
+				},
+				{
+					"id": "1:1",
+					"size": "1024x1024"
+				},
+				{
+					"id": "3:4",
+					"size": "1024x1536"
+				},
+				{
+					"id": "9:16",
+					"size": "1024x1536"
+				}
+			],
+			"counts": [1, 2, 3, 4],
+			"enhance": true
+		},
+		{
+			"id": "image-to-video",
+			"kind": "video",
+			"name": "Image to Video",
+			"description": "Animate any fashion image into a shareable short video.",
+			"minStills": 1,
+			"maxStills": 1,
+			"durations": [5, 10],
+			"ratios": ["9:16", "1:1", "16:9"],
+			"resolutions": [
+				{
+					"id": "720P",
+					"creditsPerSecond": 19.05
+				}
+			],
+			"motionVideo": false,
+			"library": "model"
+		},
+		{
+			"id": "product-promo",
+			"kind": "video",
+			"name": "Product Promo Video",
+			"description": "Turn a product shot into a short promo cut.",
+			"minStills": 1,
+			"maxStills": 9,
+			"durations": [5, 10],
+			"ratios": ["9:16", "1:1", "16:9"],
+			"resolutions": [
+				{
+					"id": "720P",
+					"creditsPerSecond": 31.75
+				},
+				{
+					"id": "1080P",
+					"creditsPerSecond": 78.59
+				}
+			],
+			"motionVideo": false,
+			"library": "product"
+		},
+		{
+			"id": "motion-control",
+			"kind": "video",
+			"name": "Motion Control",
+			"description": "Steer the camera and the subject frame by frame.",
+			"minStills": 1,
+			"maxStills": 1,
+			"durations": [5, 10],
+			"ratios": ["9:16", "1:1", "16:9"],
+			"resolutions": [
+				{
+					"id": "720P",
+					"creditsPerSecond": 19.05
+				}
+			],
+			"motionVideo": true,
+			"library": "model"
+		},
+		{
+			"id": "replace-elements",
+			"kind": "video",
+			"name": "Pet Promos",
+			"description": "Put a pet on camera to sell the product.",
+			"minStills": 1,
+			"maxStills": 9,
+			"durations": [5, 10],
+			"ratios": ["9:16", "1:1", "16:9"],
+			"resolutions": [
+				{
+					"id": "720P",
+					"creditsPerSecond": 31.75
+				},
+				{
+					"id": "1080P",
+					"creditsPerSecond": 78.59
+				}
+			],
+			"motionVideo": false,
+			"library": "product"
+		}
+	]
+}

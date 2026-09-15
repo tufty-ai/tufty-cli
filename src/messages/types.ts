@@ -1,0 +1,111 @@
+export type Locale = "en-US" | "zh-CN";
+
+export const SUPPORTED_LOCALES: readonly Locale[] = ["en-US", "zh-CN"] as const;
+
+export const DEFAULT_LOCALE: Locale = "en-US";
+
+export type Messages = {
+	cli: {
+		description: string;
+		apiKeyOption: string;
+		baseUrlOption: string;
+		verboseOption: string;
+		refreshManifestOption: string;
+		langOption: string;
+		unsupportedLocale: (locale: string, supported: string) => string;
+		unknownCommand: (name: string) => string;
+		manifestUnavailable: (baseUrl: string) => string;
+	};
+	auth: {
+		description: string;
+		setDescription: string;
+		setKeyArg: string;
+		getDescription: string;
+		getShowOption: string;
+		loginDescription: string;
+		loginSuccess: string;
+		logoutDescription: string;
+		logoutSuccess: string;
+		logoutNothing: string;
+		logoutEnvWarning: string;
+		notConfigured: string;
+		noApiKey: (keyUrl: string) => string;
+	};
+	login: {
+		starting: string;
+		visit: (url: string) => string;
+		polling: (minutes: number) => string;
+		expired: string;
+		timeout: (minutes: number) => string;
+	};
+	tools: {
+		namespaceDescription: string;
+		listDescription: string;
+		describeDescription: string;
+		describeIdArg: string;
+		toolNotFound: (id: string) => string;
+		statusDescription: string;
+		statusWaitOption: string;
+		productOption: (min: number) => string;
+		modelOption: (min: number) => string;
+		qualityOption: (pricing: string) => string;
+		ratioImageOption: (sizes: string) => string;
+		countOption: string;
+		enhanceOption: string;
+		stillOption: (range: string) => string;
+		exactly: (n: number) => string;
+		durationOption: string;
+		ratioVideoOption: string;
+		resolutionOption: (pricing: string) => string;
+		motionVideoOption: string;
+		notesOption: string;
+		noCutoutOption: string;
+		dryRunOption: string;
+		noWaitOption: string;
+		timeoutOption: string;
+		saveOption: string;
+		formatOption: string;
+		helpAfter: string;
+		statusHelpAfter: string;
+		missingInput: (flag: string, min: number, got: number) => string;
+		tooManyInputs: (flag: string, max: number, got: number) => string;
+		tooManyParts: (value: string, max: number) => string;
+		tooManyImages: (pairs: number, count: number, max: number) => string;
+		fileNotFound: (p: string) => string;
+		invalidTimeout: (value: string) => string;
+		costEstimate: (total: number, generation: number, cutout: number) => string;
+		uploading: (label: string) => string;
+		cuttingOut: (label: string) => string;
+		cutoutDegraded: (label: string) => string;
+		cutoutEmpty: (label: string) => string;
+		cutoutNotStored: (label: string) => string;
+		submitted: (runId: string, credits: number | undefined) => string;
+		waiting: (runId: string) => string;
+		completed: (count: number) => string;
+		runFailed: (reason: string) => string;
+		runTimeout: (seconds: number, runId: string) => string;
+		saved: (p: string) => string;
+	};
+	api: {
+		networkError: (url: string, reason: string) => string;
+		badResponse: (url: string) => string;
+		requestFailed: (status: number) => string;
+		unauthorized: (keyUrl: string) => string;
+		insufficientBalance: (required: number | undefined) => string;
+		insufficientBalanceHint: (rechargeUrl: string) => string;
+		forbidden: string;
+		notFound: string;
+		invalidRequest: (serverCode: string | undefined) => string;
+		serverError: (status: number, serverCode: string | undefined) => string;
+		versionTooLow: (upgradeCommand: string) => string;
+		uploadFailed: (reason: string) => string;
+		remoteDownloadFailed: (url: string, reason: string) => string;
+		videoTruncated: (type: string, declared: number, actual: number) => string;
+		videoNoMoov: string;
+		downloadFailed: (url: string, attempts: number, reason: string) => string;
+	};
+	upload: {
+		description: string;
+		fileArg: string;
+	};
+};

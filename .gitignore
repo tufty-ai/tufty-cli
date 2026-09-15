@@ -1,0 +1,8 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+
+# ClawHub 发布进度记账（scripts/publish-display-names.mjs）
+scripts/.publish-display-names.done

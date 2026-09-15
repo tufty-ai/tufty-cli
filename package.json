@@ -1,0 +1,63 @@
+{
+	"name": "@tufty/cli",
+	"version": "1.1.0",
+	"description": "Command-line interface for tufty.ai studio tools: pet dress-up, scene swap, flat-to-3D and short product videos from your terminal or AI agent",
+	"author": "tufty.ai",
+	"license": "AGPL-3.0-or-later",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/tufty-ai/tufty-cli.git"
+	},
+	"bugs": {
+		"url": "https://github.com/tufty-ai/tufty-cli/issues"
+	},
+	"homepage": "https://tufty.ai",
+	"files": [
+		"bin",
+		"dist",
+		"LICENSE"
+	],
+	"bin": {
+		"tufty": "./bin/tufty.cjs"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"exports": {
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"build": "tsup",
+		"dev": "node bin/tufty.cjs",
+		"start": "node dist/index.js",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"skills:sync": "tsx scripts/sync-skills.ts",
+		"skills:sync:fixtures": "tsx scripts/sync-skills.ts --manifest tests/fixtures/tools.en-US.json --manifest tests/fixtures/tools.zh-CN.json",
+		"publish:skills": "node scripts/publish-display-names.mjs",
+		"publish:npm": "npm run build && npm publish --access public",
+		"prepublishOnly": "npm run build"
+	},
+	"dependencies": {
+		"commander": "^12.1.0",
+		"mime-types": "^2.1.35"
+	},
+	"devDependencies": {
+		"@types/mime-types": "^2.1.4",
+		"@types/node": "^22.19.0",
+		"tsup": "^8.5.1",
+		"tsx": "^4.21.0",
+		"typescript": "^5.9.3",
+		"vitest": "^3.2.4"
+	},
+	"keywords": [
+		"tufty",
+		"cli",
+		"ai",
+		"pet",
+		"virtual-try-on",
+		"image-generation",
+		"video-generation",
+		"agent-skills"
+	]
+}
