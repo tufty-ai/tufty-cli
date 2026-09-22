@@ -7,6 +7,7 @@ import { runCli, setupCliEnv } from "./helpers/run-cli";
 import {
 	cutoutUrlFor,
 	installStudioRoutes,
+	installUnlistedTools,
 	MP4_BYTES,
 	PNG_BYTES,
 	publicUrlFor,
@@ -14,6 +15,10 @@ import {
 } from "./helpers/studio";
 
 const env = setupCliEnv();
+// 下面这个假服务器是整个文件共用的：beforeEach 换一个新的，afterEach 关掉它。而
+// vitest.config.mts 里 sequence.concurrent 默认开着 —— 同一文件的用例并发跑时会互相
+// 覆盖 server，还会把别人正在用的那个提前关掉，表现是退出码和请求记录对不上。所以这
+// 个文件的 describe 一律用 .sequential。
 let server: MockServer;
 let run: RunState;
 
@@ -31,7 +36,7 @@ function base(...args: string[]) {
 	return ["--base-url", server.url, "--api-key", "sk-test", ...args];
 }
 
-describe("input validation happens before anything is uploaded", () => {
+describe.sequential("input validation happens before anything is uploaded", () => {
 	const cases: Array<{ name: string; args: string[]; code: string }> = [
 		{
 			name: "missing required model",
@@ -40,16 +45,16 @@ describe("input validation happens before anything is uploaded", () => {
 		},
 		{
 			name: "missing required product",
-			args: ["flat-to-3d"],
+			args: ["pet-dressup", "--model", TUFTY_B],
 			code: "missing_input",
 		},
 		{
 			name: "too many stills",
 			args: [
-				"product-promo",
+				"image-to-video",
 				"--still",
 				...Array.from(
-					{ length: 10 },
+					{ length: 2 },
 					(_, i) => `https://static.tufty.ai/u/${i}.jpg`,
 				),
 			],
@@ -114,7 +119,7 @@ describe("input validation happens before anything is uploaded", () => {
 	}
 });
 
-describe("--dry-run", () => {
+describe.sequential("--dry-run", () => {
 	it("prints the image payload and credit estimate without auth or uploads", async () => {
 		const sweater = env.file("sweater.png", PNG_BYTES);
 		const result = await runCli([
@@ -160,6 +165,7 @@ describe("--dry-run", () => {
 	});
 
 	it("omits size for auto, adds enhance only where the manifest allows it", async () => {
+		installUnlistedTools(server);
 		const result = await runCli([
 			"--base-url",
 			server.url,
@@ -183,6 +189,7 @@ describe("--dry-run", () => {
 	});
 
 	it("estimates video credits per second plus cutouts", async () => {
+		installUnlistedTools(server);
 		const stills = [TUFTY_A, TUFTY_B, "https://static.tufty.ai/u/c.jpg"];
 		const withCutout = await runCli([
 			"--base-url",
@@ -227,7 +234,7 @@ describe("--dry-run", () => {
 	});
 });
 
-describe("image tool happy path", () => {
+describe.sequential("image tool happy path", () => {
 	it("uploads, cuts out, submits, polls and saves", async () => {
 		const sweater = env.file("sweater.png", PNG_BYTES);
 		const front = env.file("front.png", PNG_BYTES);
@@ -368,9 +375,11 @@ describe("image tool happy path", () => {
 	it("--format url prints one output URL per line", async () => {
 		const result = await runCli(
 			base(
-				"flat-to-3d",
+				"pet-dressup",
 				"--product",
 				TUFTY_A,
+				"--model",
+				TUFTY_B,
 				"--no-cutout",
 				"--format",
 				"url",
@@ -387,9 +396,11 @@ describe("image tool happy path", () => {
 		const result = await runCli([
 			"--base-url",
 			server.url,
-			"flat-to-3d",
+			"pet-dressup",
 			"--product",
 			TUFTY_A,
+			"--model",
+			TUFTY_B,
 			"--no-cutout",
 			"--no-wait",
 		]);
@@ -400,8 +411,9 @@ describe("image tool happy path", () => {
 	});
 });
 
-describe("video tool happy path", () => {
+describe.sequential("video tool happy path", () => {
 	it("uploads the still (with cutout) and the motion video (without), then polls", async () => {
+		installUnlistedTools(server);
 		const still = env.file("model.png", PNG_BYTES);
 		const motion = env.file("dolly.mp4", MP4_BYTES);
 		server.route("POST /api/cli/studio/analyze", (req) => ({
@@ -463,6 +475,7 @@ describe("video tool happy path", () => {
 	});
 
 	it("uses the tool's library for still cutouts", async () => {
+		installUnlistedTools(server);
 		const result = await runCli(
 			base("product-promo", "--still", TUFTY_A, "--no-wait"),
 		);
@@ -487,6 +500,7 @@ describe("video tool happy path", () => {
 	});
 
 	it("rejects a truncated motion video before uploading it", async () => {
+		installUnlistedTools(server);
 		const broken = Buffer.concat([
 			MP4_BYTES.subarray(0, 16),
 			Buffer.from([0, 0, 1, 0, 0x6d, 0x64, 0x61, 0x74]),
@@ -508,7 +522,7 @@ describe("video tool happy path", () => {
 	});
 });
 
-describe("cutout subject selection", () => {
+describe.sequential("cutout subject selection", () => {
 	const FOREIGN = "https://v3b.fal.media/files/tmp-cutout.png";
 
 	it("uses the first subject on the same storage host as the uploaded image", async () => {
@@ -529,6 +543,24 @@ describe("cutout subject selection", () => {
 		expect(result.stderr).not.toContain("not stored");
 	});
 
+	it("accepts a cutout stored on another tufty storage host", async () => {
+		// 网站素材库的图在 files.dlazy.com，服务端把抠图结果存到 static.tufty.ai ——
+		// 两边都是自家存储。只认同域名的话，抠图扣了积分，结果却被丢掉换回原图。
+		const LIBRARY = "https://files.dlazy.com/data/studio-asset/beagle.webp";
+		const STORED = "https://static.tufty.ai/data/studio-asset/beagle-cutout.png";
+		server.route("POST /api/cli/studio/analyze", () => ({
+			json: { subjects: [{ url: FOREIGN }, { url: STORED }], degraded: false },
+		}));
+		const result = await runCli(
+			base("image-to-video", "--still", LIBRARY, "--no-wait"),
+		);
+		expect(result.exitCode).toBe(0);
+		expect(server.find("POST /api/cli/studio/runs")[0]?.json.stills).toEqual([
+			STORED,
+		]);
+		expect(result.stderr).not.toContain("not stored");
+	});
+
 	it("falls back to the uploaded original when no subject is on the storage host", async () => {
 		server.route("POST /api/cli/studio/analyze", () => ({
 			json: { subjects: [{ url: FOREIGN }], degraded: false },
@@ -545,14 +577,14 @@ describe("cutout subject selection", () => {
 	});
 });
 
-describe("--no-wait", () => {
+describe.sequential("--no-wait", () => {
 	it("returns the runId right after submitting", async () => {
 		const result = await runCli(
-			base("product-promo", "--still", TUFTY_A, "--no-cutout", "--no-wait"),
+			base("image-to-video", "--still", TUFTY_A, "--no-cutout", "--no-wait"),
 		);
 		expect(result.exitCode).toBe(0);
 		expect(result.payload.result).toEqual({
-			tool: "product-promo",
+			tool: "image-to-video",
 			runId: "run_1",
 			status: "running",
 			outputs: [],

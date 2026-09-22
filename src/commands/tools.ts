@@ -32,6 +32,7 @@ import type {
 } from "../lib/manifest";
 import {
 	isRemoteUrl,
+	isTuftyHosted,
 	needsUpload,
 	resolveToStorageUrl,
 	sameHost,
@@ -48,7 +49,13 @@ const MAX_PRODUCT_PARTS = 4;
  * 但必须在上传前挡住：抠图按张先扣费，等提交任务时才被 400 拒掉就白花积分了。
  */
 const MAX_IMAGE_REFERENCES = 8;
-/** 一次出图最多几张（服务端 lib/studio/generate.ts 的 MAX_IMAGES_PER_RUN），同样要在抠图前挡住 */
+/**
+ * 一次出图最多几张，同样要在抠图前挡住。
+ *
+ * 跟着服务端的 config/studio-limits.config.ts 走。这里只能拄一份：CLI 是单独发到
+ * npm 的包，不能引主应用的源码。改那边的数时记得回来改这一行 —— 不改也
+ * 不会出错，只是 CLI 的预检和服务端的实际上限对不上。
+ */
 const MAX_IMAGES_PER_RUN = 16;
 
 type CommonOptions = GlobalOptions & {
@@ -287,9 +294,13 @@ async function prepareImage(
 		return url;
 	}
 	// 服务端转存抠图失败时会回供应商的临时地址，提交任务会被 reference_not_allowed 拒掉。
-	// 只认和这张图的存储地址同域名的结果；不写死域名表 —— 存储域名随服务端而变。
+	// 认自家存储上的结果：和这张图同域名，或者是 tufty 的存储域名。只认同域名不够 ——
+	// 网站素材库的图在 files.dlazy.com，抠图结果却存到 static.tufty.ai，积分扣了、
+	// 结果被丢掉换回原图。
 	const subject = subjects.find(
-		(s) => typeof s.url === "string" && sameHost(s.url, url),
+		(s) =>
+			typeof s.url === "string" &&
+			(sameHost(s.url, url) || isTuftyHosted(s.url)),
 	);
 	if (!subject) {
 		log(m.cutoutNotStored(label));

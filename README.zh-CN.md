@@ -2,7 +2,7 @@
 
 [English](./README.md) · [中文](./README.zh-CN.md)
 
-[tufty.ai](https://tufty.ai) 工作室工具的命令行：宠物换装、场景替换、平铺转 3D，以及用图片生成短视频。为终端和 AI 智能体设计：标准输出永远是 JSON 信封，进度写到标准错误。
+[tufty.ai](https://tufty.ai) 工作室工具的命令行：宠物换装，以及用图片生成短视频。为终端和 AI 智能体设计：标准输出永远是 JSON 信封，进度写到标准错误。
 
 > npm 包名和 scope 尚未最终确定。
 
@@ -47,12 +47,7 @@ tufty pet-dressup --product ./sweater.jpg --model ./corgi.jpg --quality medium -
 | 命令 | 类型 | 输入 |
 | ---- | ---- | ---- |
 | `tufty pet-dressup` | 图片 | `--product`（至少 1）、`--model`（至少 1） |
-| `tufty background-swap` | 图片 | `--model`（至少 1），`--product` 可选 |
-| `tufty flat-to-3d` | 图片 | `--product`（至少 1），`--model` 可选 |
 | `tufty image-to-video` | 视频 | `--still`（恰好 1 张） |
-| `tufty product-promo` | 视频 | `--still`（1-9 张） |
-| `tufty motion-control` | 视频 | `--still`（恰好 1 张）、`--motion-video` 参考视频（参数可选） |
-| `tufty replace-elements` | 视频 | `--still`（1-9 张） |
 
 ### 图片工具参数
 
@@ -73,7 +68,7 @@ tufty pet-dressup --product ./sweater.jpg --model ./corgi.jpg --quality medium -
 | `--duration <seconds>` | 视频时长（默认第一个选项）。 |
 | `--ratio <id>` | 画面比例（默认第一个选项）。 |
 | `--resolution <id>` | 分辨率（默认最便宜的一档）。 |
-| `--motion-video <file\|url>` | 参考运镜视频（仅运镜控制）；原样上传，不做抠图。 |
+| `--motion-video <file\|url>` | 参考运镜视频（仅清单里开了这一项的工具有）；原样上传，不做抠图。 |
 
 ### 通用参数
 

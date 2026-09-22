@@ -1,7 +1,2 @@
 tufty-pet-dressup
-tufty-background-swap
-tufty-flat-to-3d
 tufty-image-to-video
-tufty-product-promo
-tufty-motion-control
-tufty-replace-elements

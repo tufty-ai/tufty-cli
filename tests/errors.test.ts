@@ -7,6 +7,10 @@ import { runCli, setupCliEnv } from "./helpers/run-cli";
 import { installStudioRoutes, type RunState } from "./helpers/studio";
 
 setupCliEnv();
+// 下面这个假服务器是整个文件共用的：beforeEach 换一个新的，afterEach 关掉它。而
+// vitest.config.mts 里 sequence.concurrent 默认开着 —— 同一文件的用例并发跑时会互相
+// 覆盖 server，还会把别人正在用的那个提前关掉，表现是退出码和请求记录对不上。所以这
+// 个文件的 describe 一律用 .sequential。
 let server: MockServer;
 let run: RunState;
 
@@ -18,27 +22,30 @@ beforeEach(async () => {
 afterEach(() => server.close());
 
 const TUFTY_A = "https://static.tufty.ai/u/a.jpg";
+const TUFTY_B = "https://static.tufty.ai/u/b.jpg";
 
-function flat(...extra: string[]) {
+function pet(...extra: string[]) {
 	return [
 		"--base-url",
 		server.url,
 		"--api-key",
 		"sk-test",
-		"flat-to-3d",
+		"pet-dressup",
 		"--product",
 		TUFTY_A,
+		"--model",
+		TUFTY_B,
 		...extra,
 	];
 }
 
-describe("HTTP error mapping", () => {
+describe.sequential("HTTP error mapping", () => {
 	it("402 insufficient_credits → insufficient_balance with a recharge hint", async () => {
 		server.route("POST /api/cli/studio/runs", () => ({
 			status: 402,
 			json: { error: "insufficient_credits", required: 144 },
 		}));
-		const result = await runCli(flat("--no-cutout"));
+		const result = await runCli(pet("--no-cutout"));
 		expect(result.exitCode).toBe(1);
 		expect(result.payload).toEqual({
 			ok: false,
@@ -58,7 +65,7 @@ describe("HTTP error mapping", () => {
 			status: 402,
 			json: { error: "insufficient_credits", required: 1 },
 		}));
-		const result = await runCli(flat());
+		const result = await runCli(pet());
 		expect(result.payload.code).toBe("insufficient_balance");
 		expect(server.find("POST /api/cli/studio/runs")).toHaveLength(0);
 	});
@@ -73,7 +80,7 @@ describe("HTTP error mapping", () => {
 				details: { currentVersion: "1.0.0", minVersion: "1.1.0" },
 			},
 		}));
-		const result = await runCli(flat("--no-cutout"));
+		const result = await runCli(pet("--no-cutout"));
 		expect(result.exitCode).toBe(1);
 		expect(result.payload.code).toBe("cli_version_too_low");
 		expect(result.payload.message).toContain("min 1.1.0");
@@ -99,7 +106,7 @@ describe("HTTP error mapping", () => {
 			status: 401,
 			json: { error: "unauthorized", message: "API key required" },
 		}));
-		const result = await runCli(flat("--no-cutout"));
+		const result = await runCli(pet("--no-cutout"));
 		expect(result.payload.code).toBe("unauthorized");
 		expect(result.payload.message).toContain(API_KEY_URL);
 		expect(result.payload.message).toContain("tufty auth set <key>");
@@ -114,7 +121,7 @@ describe("HTTP error mapping", () => {
 				details: { issues: [{ path: ["count"] }] },
 			},
 		}));
-		const result = await runCli(flat("--no-cutout"));
+		const result = await runCli(pet("--no-cutout"));
 		expect(result.exitCode).toBe(1);
 		expect(result.payload.code).toBe("invalid_request");
 		expect(result.payload.message).toBe("Invalid request body");
@@ -152,9 +159,11 @@ describe("HTTP error mapping", () => {
 		const result = await runCli([
 			"--base-url",
 			server.url,
-			"flat-to-3d",
+			"pet-dressup",
 			"--product",
 			TUFTY_A,
+			"--model",
+			TUFTY_B,
 		]);
 		expect(result.exitCode).toBe(1);
 		expect(result.payload.code).toBe("no_api_key");
@@ -164,19 +173,19 @@ describe("HTTP error mapping", () => {
 	it("a failed run → task_failed with the runId", async () => {
 		run.status = "failed";
 		run.error = "generate_failed";
-		const result = await runCli(flat("--no-cutout"));
+		const result = await runCli(pet("--no-cutout"));
 		expect(result.exitCode).toBe(1);
 		expect(result.payload.code).toBe("task_failed");
 		expect(result.payload.details).toEqual({
 			runId: "run_1",
-			tool: "flat-to-3d",
+			tool: "pet-dressup",
 			serverCode: "generate_failed",
 		});
 	});
 
 	it("times out with a hint to resume via status", async () => {
 		run.runningPolls = 1_000_000;
-		const result = await runCli(flat("--no-cutout", "--timeout", "0.05"));
+		const result = await runCli(pet("--no-cutout", "--timeout", "0.05"));
 		expect(result.exitCode).toBe(1);
 		expect(result.payload.code).toBe("timeout");
 		expect(result.payload.details).toEqual({ runId: "run_1" });
@@ -184,7 +193,7 @@ describe("HTTP error mapping", () => {
 	});
 });
 
-describe("tufty status", () => {
+describe.sequential("tufty status", () => {
 	function status(...args: string[]) {
 		return runCli([
 			"--base-url",
@@ -198,11 +207,11 @@ describe("tufty status", () => {
 
 	it("returns the current state once without --wait", async () => {
 		run.kind = "video";
-		run.tool = "product-promo";
+		run.tool = "image-to-video";
 		const running = await status("run_9");
 		expect(running.exitCode).toBe(0);
 		expect(running.payload.result).toEqual({
-			tool: "product-promo",
+			tool: "image-to-video",
 			runId: "run_9",
 			status: "running",
 			outputs: [],

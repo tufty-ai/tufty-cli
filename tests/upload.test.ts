@@ -11,6 +11,10 @@ import {
 } from "./helpers/studio";
 
 const env = setupCliEnv();
+// 下面这个假服务器是整个文件共用的：beforeEach 换一个新的，afterEach 关掉它。而
+// vitest.config.mts 里 sequence.concurrent 默认开着 —— 同一文件的用例并发跑时会互相
+// 覆盖 server，还会把别人正在用的那个提前关掉，表现是退出码和请求记录对不上。所以这
+// 个文件的 describe 一律用 .sequential。
 let server: MockServer;
 
 beforeEach(async () => {
@@ -20,7 +24,7 @@ beforeEach(async () => {
 
 afterEach(() => server.close());
 
-describe("tufty upload", () => {
+describe.sequential("tufty upload", () => {
 	it("uploads a local file and prints its public URL", async () => {
 		const file = env.file("shot.png", PNG_BYTES);
 		const result = await runCli([
@@ -147,7 +151,7 @@ describe("tufty upload", () => {
 	});
 });
 
-describe("checkMp4Integrity", () => {
+describe.sequential("checkMp4Integrity", () => {
 	it("accepts a complete file, rejects truncated or index-less files, ignores other containers", () => {
 		setLocale("en-US");
 		expect(checkMp4Integrity(MP4_BYTES)).toBeNull();

@@ -1,6 +1,6 @@
 {
 	"name": "@tufty/cli",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Command-line interface for tufty.ai studio tools: pet dress-up, scene swap, flat-to-3D and short product videos from your terminal or AI agent",
 	"author": "tufty.ai",
 	"license": "AGPL-3.0-or-later",

@@ -2,7 +2,7 @@
 
 [English](./README.md) · [中文](./README.zh-CN.md)
 
-Command-line interface for the [tufty.ai](https://tufty.ai) studio tools: pet dress-up, scene swap, flat-to-3D, and short videos from photos. Built for terminals and AI agents: stdout is always a JSON envelope, progress goes to stderr.
+Command-line interface for the [tufty.ai](https://tufty.ai) studio tools: pet dress-up, and short videos from photos. Built for terminals and AI agents: stdout is always a JSON envelope, progress goes to stderr.
 
 > The npm package name and scope are not final yet.
 
@@ -47,12 +47,7 @@ The tool commands are generated from the server's tool manifest, so options and 
 | Command | Type | Inputs |
 | ------- | ---- | ------ |
 | `tufty pet-dressup` | image | `--product` (1+), `--model` (1+) |
-| `tufty background-swap` | image | `--model` (1+), `--product` optional |
-| `tufty flat-to-3d` | image | `--product` (1+), `--model` optional |
 | `tufty image-to-video` | video | `--still` (exactly 1) |
-| `tufty product-promo` | video | `--still` (1-9) |
-| `tufty motion-control` | video | `--still` (exactly 1), `--motion-video` reference (optional flag) |
-| `tufty replace-elements` | video | `--still` (1-9) |
 
 ### Image tool flags
 
@@ -73,7 +68,7 @@ The tool commands are generated from the server's tool manifest, so options and 
 | `--duration <seconds>` | Video length (default: the first option). |
 | `--ratio <id>` | Aspect ratio (default: the first option). |
 | `--resolution <id>` | Resolution (default: the cheapest). |
-| `--motion-video <file\|url>` | Reference motion video (motion-control only); uploaded as-is, never cut out. |
+| `--motion-video <file\|url>` | Reference motion video; only on tools whose manifest enables it. Uploaded as-is, never cut out. |
 
 ### Common flags
 

@@ -1,8 +1,8 @@
 ---
 name: tufty-image-to-video
-version: 1.1.0
+version: 1.1.1
 description: "Image to video on tufty.ai: animate a single fashion, pet or product photo into a short shareable video clip (5 or 10 seconds; 9:16, 1:1 or 16:9). Use when the user wants to make a photo move, turn a picture into a video, or create a short clip for social media. 图转视频（tufty.ai）：把一张时尚、宠物或商品图片变成可分享的短视频（5 或 10 秒；9:16、1:1、16:9）。适用于让照片动起来、图片生成视频、制作社媒短视频。"
-metadata: {"clawdbot":{"emoji":"🎬","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.0","installAlternative":"npx @tufty/cli@1.1.0","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"When invoking this skill, use tufty image-to-video -h for help."}}
+metadata: {"clawdbot":{"emoji":"🎬","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.1","installAlternative":"npx @tufty/cli@1.1.1","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"When invoking this skill, use tufty image-to-video -h for help."}}
 ---
 
 # 图转视频 Image to Video
@@ -58,16 +58,16 @@ Keys can be **rotated or revoked at any time** from the same page.
 - **Homepage**: [tufty.ai](https://tufty.ai)
 - **Source code**: [github.com/tufty-ai/tufty-cli](https://github.com/tufty-ai/tufty-cli) (AGPL-3.0-or-later)
 - **Maintainer**: tufty.ai
-- **npm package**: `@tufty/cli` (pinned to `1.1.0` in this skill's install spec)
+- **npm package**: `@tufty/cli` (pinned to `1.1.1` in this skill's install spec)
 - **Config file**: `~/.tufty/config.json`
 
 You can run it on demand without a global install:
 
 ```bash
-npx @tufty/cli@1.1.0 <command>
+npx @tufty/cli@1.1.1 <command>
 ```
 
-Or install globally with the exact pinned version declared in `metadata.clawdbot.install`: `npm install -g @tufty/cli@1.1.0`.
+Or install globally with the exact pinned version declared in `metadata.clawdbot.install`: `npm install -g @tufty/cli@1.1.1`.
 
 ## How It Works
 

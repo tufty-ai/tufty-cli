@@ -1,8 +1,8 @@
 ---
 name: tufty-pet-dressup
-version: 1.1.0
+version: 1.1.1
 description: "Pet dress-up on tufty.ai: put any garment (sweater, hoodie, raincoat, costume) onto a photo of a dog or cat and get realistic try-on images without a photoshoot. Use when the user wants to dress up a pet, preview how clothing looks on their pet, or create pet apparel product shots. 宠物换装（tufty.ai）：把任意服饰（毛衣、卫衣、雨衣、节日装）穿到猫狗照片上，生成逼真的上身效果图，不用约拍。适用于给宠物试衣服、预览宠物穿搭、制作宠物服装电商图。"
-metadata: {"clawdbot":{"emoji":"🐶","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.0","installAlternative":"npx @tufty/cli@1.1.0","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"When invoking this skill, use tufty pet-dressup -h for help."}}
+metadata: {"clawdbot":{"emoji":"🐶","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.1","installAlternative":"npx @tufty/cli@1.1.1","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"When invoking this skill, use tufty pet-dressup -h for help."}}
 ---
 
 # 宠物换装 Pet Dress-Up
@@ -59,16 +59,16 @@ Keys can be **rotated or revoked at any time** from the same page.
 - **Homepage**: [tufty.ai](https://tufty.ai)
 - **Source code**: [github.com/tufty-ai/tufty-cli](https://github.com/tufty-ai/tufty-cli) (AGPL-3.0-or-later)
 - **Maintainer**: tufty.ai
-- **npm package**: `@tufty/cli` (pinned to `1.1.0` in this skill's install spec)
+- **npm package**: `@tufty/cli` (pinned to `1.1.1` in this skill's install spec)
 - **Config file**: `~/.tufty/config.json`
 
 You can run it on demand without a global install:
 
 ```bash
-npx @tufty/cli@1.1.0 <command>
+npx @tufty/cli@1.1.1 <command>
 ```
 
-Or install globally with the exact pinned version declared in `metadata.clawdbot.install`: `npm install -g @tufty/cli@1.1.0`.
+Or install globally with the exact pinned version declared in `metadata.clawdbot.install`: `npm install -g @tufty/cli@1.1.1`.
 
 ## How It Works
 
@@ -78,7 +78,7 @@ This skill is a thin client over the tufty.ai hosted API. When you invoke it:
 - Every input image first goes through **automatic subject cutout, which costs 1 credit per image**. Pass `--no-cutout` to skip it and use the uploaded image as-is.
 - The CLI then submits the run to `tufty.ai` and polls every 3 seconds until it completes (up to `--timeout`, default 900 seconds). `--no-wait` returns the `runId` immediately.
 - Generated outputs are hosted on `static.tufty.ai`; `--save <dir>` downloads them.
-- Pricing: credits per output image: low=6, medium=18, high=49. Total = quality credits x (products x models) x `--count`, plus 1 credit per input image cut out. `--dry-run` prints the exact request and the estimate without uploading or charging anything.
+- Pricing: credits per output image: low=6, medium=18, high=49, xhigh=71, max=94. Total = quality credits x (products x models) x `--count`, plus 1 credit per input image cut out. `--dry-run` prints the exact request and the estimate without uploading or charging anything.
 
 Your API key is only sent to `tufty.ai`; it is never attached to storage uploads or downloads. See [tufty.ai](https://tufty.ai) for the full service terms.
 
@@ -99,11 +99,12 @@ Options:
                            join up to 4 shots of ONE product with "+" (front.jpg+back.jpg). At least 1.
   --model <file|url...>    Model image(s) (the pet, person or subject): local path, data: URL or http(s) URL. Each
                            model is paired with every product. At least 1.
-  --quality <id>           Quality tier; credits per output image: low=6, medium=18, high=49 (choices: "low", "medium",
-                           "high", default: "low")
+  --quality <id>           Quality tier; credits per output image: low=6, medium=18, high=49, xhigh=71, max=94
+                           (choices: "low", "medium", "high", "xhigh", "max", default: "low")
   --ratio <id>             Aspect ratio; auto lets the model decide (1:1=1024x1024, 3:4=1024x1536, 9:16=1024x1536)
                            (choices: "auto", "1:1", "3:4", "9:16", default: "auto")
   --count <n>              Images generated for each product/model pairing (choices: "1", "2", "3", "4", default: "1")
+  --enhance                Apply the tool's built-in prompt enhancement
   --notes <text>           Extra instructions for this run (free text, max 2000 chars)
   --no-cutout              Skip the automatic subject cutout on input images (saves 1 credit per image)
   --dry-run                Validate inputs and print the request payload + credit estimate; uploads and charges nothing

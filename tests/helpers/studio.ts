@@ -21,6 +21,34 @@ export const TOOL_IDS: string[] = FIXTURES["en-US"].tools.map(
 	(t: { id: string }) => t.id,
 );
 
+/**
+ * 网站暂时不对外露出、因此清单里没有的工具（网站仓库 config/studio-tools.config.ts）。
+ *
+ * 清单是服务端契约：enhance 开关、多张静帧、参考视频、1080P、product 词表都写在
+ * 契约里，而今天露出的两个工具一个都没用到。CLI 照单办事的这部分逻辑不能没人看着，
+ * 所以这几条按它们被藏起来之前清单真实返回的样子留在这里 —— 单独一份，`FIXTURES`
+ * 仍然是线上清单，工具列表的断言按它来。
+ */
+export const UNLISTED_TOOLS = JSON.parse(
+	fs.readFileSync(
+		path.join(__dirname, "../fixtures/tools.unlisted.json"),
+		"utf8",
+	),
+).tools;
+
+/** 让假服务端的清单接口连没露出的工具一起返回。 */
+export function installUnlistedTools(server: MockServer): void {
+	server.route("GET /api/cli/studio/tools", (req) => {
+		const locale = req.query.get("locale") === "zh-CN" ? "zh-CN" : "en-US";
+		return {
+			json: {
+				locale,
+				tools: [...FIXTURES[locale].tools, ...UNLISTED_TOOLS],
+			},
+		};
+	});
+}
+
 export const PNG_BYTES = Buffer.concat([
 	Buffer.from("89504e470d0a1a0a", "hex"),
 	Buffer.from("fake-png-body"),
@@ -97,7 +125,7 @@ export function installStudioRoutes(server: MockServer): RunState {
 	}));
 
 	server.route("POST /api/cli/studio/runs", (req) => {
-		const tool = FIXTURES["en-US"].tools.find(
+		const tool = [...FIXTURES["en-US"].tools, ...UNLISTED_TOOLS].find(
 			(t: { id: string }) => t.id === req.json.tool,
 		);
 		state.tool = req.json.tool;

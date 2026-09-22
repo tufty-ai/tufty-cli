@@ -8,9 +8,18 @@ import type { StudioTool } from "../src/lib/manifest";
 import { setLocale } from "../src/messages";
 import { type MockServer, startMockServer } from "./helpers/mock-server";
 import { runCli, setupCliEnv } from "./helpers/run-cli";
-import { FIXTURES, installStudioRoutes, TOOL_IDS } from "./helpers/studio";
+import {
+	FIXTURES,
+	installStudioRoutes,
+	TOOL_IDS,
+	UNLISTED_TOOLS,
+} from "./helpers/studio";
 
 const env = setupCliEnv();
+// 下面这个假服务器是整个文件共用的：beforeEach 换一个新的，afterEach 关掉它。而
+// vitest.config.mts 里 sequence.concurrent 默认开着 —— 同一文件的用例并发跑时会互相
+// 覆盖 server，还会把别人正在用的那个提前关掉，表现是退出码和请求记录对不上。所以这
+// 个文件的 describe 一律用 .sequential。
 let server: MockServer;
 
 beforeEach(async () => {
@@ -24,7 +33,8 @@ function optionsOf(
 	id: string,
 ): Map<string, { choices?: string[]; default?: unknown }> {
 	setLocale("en-US");
-	const tool = FIXTURES["en-US"].tools.find(
+	// 连没露出的工具一起找：flag 是按清单条目生成的，这一步不碰服务端。
+	const tool = [...FIXTURES["en-US"].tools, ...UNLISTED_TOOLS].find(
 		(t: StudioTool) => t.id === id,
 	) as StudioTool;
 	const cmd = registerRunCommand(new Command("tufty"), tool);
@@ -36,20 +46,14 @@ function optionsOf(
 	);
 }
 
-describe("manifest-driven command registration", () => {
+describe.sequential("manifest-driven command registration", () => {
 	it("registers one command per manifest tool", async () => {
 		const result = await runCli(["--base-url", server.url, "--help"]);
 		expect(result.exitCode).toBe(0);
 		for (const id of TOOL_IDS) expect(result.stdout).toContain(id);
-		expect(TOOL_IDS).toEqual([
-			"pet-dressup",
-			"background-swap",
-			"flat-to-3d",
-			"image-to-video",
-			"product-promo",
-			"motion-control",
-			"replace-elements",
-		]);
+		// 对外只放出这两个：清单是 CLI 命令、技能和文档的唯一来源，网页上点不到
+		// 的工具，终端里也不该能调（网站仓库 config/studio-tools.config.ts）。
+		expect(TOOL_IDS).toEqual(["pet-dressup", "image-to-video"]);
 	});
 
 	it("builds image flags from the manifest entry", () => {
@@ -83,6 +87,7 @@ describe("manifest-driven command registration", () => {
 		expect(pet.get("--timeout")?.default).toBe("900");
 		// 线上 pet-dressup 的 enhance 是 false，不给开关
 		expect(pet.has("--enhance")).toBe(false);
+		// 清单里 enhance 为真的工具才有这个开关
 		expect(optionsOf("background-swap").has("--enhance")).toBe(true);
 		expect(optionsOf("background-swap").get("--quality")?.default).toBe("low");
 	});

@@ -9,6 +9,10 @@ import { type MockServer, startMockServer } from "./helpers/mock-server";
 import { runCli, setupCliEnv } from "./helpers/run-cli";
 
 const env = setupCliEnv();
+// 下面这个假服务器是整个文件共用的：beforeEach 换一个新的，afterEach 关掉它。而
+// vitest.config.mts 里 sequence.concurrent 默认开着 —— 同一文件的用例并发跑时会互相
+// 覆盖 server，还会把别人正在用的那个提前关掉，表现是退出码和请求记录对不上。所以这
+// 个文件的 describe 一律用 .sequential。
 let server: MockServer;
 
 beforeEach(async () => {
@@ -32,7 +36,7 @@ function readConfig() {
 	return JSON.parse(fs.readFileSync(path.join(env.dir, "config.json"), "utf8"));
 }
 
-describe("device login", () => {
+describe.sequential("device login", () => {
 	it("opens the verification page and polls until an apiKey arrives", async () => {
 		verificationAfter(2);
 		const opened = vi.fn();
@@ -91,7 +95,7 @@ describe("device login", () => {
 	});
 });
 
-describe("API key lookup order: --api-key → TUFTY_API_KEY → config → device login", () => {
+describe.sequential("API key lookup order: --api-key → TUFTY_API_KEY → config → device login", () => {
 	function writeConfigKey(key: string) {
 		fs.writeFileSync(
 			path.join(env.dir, "config.json"),
@@ -154,7 +158,7 @@ describe("API key lookup order: --api-key → TUFTY_API_KEY → config → devic
 	});
 });
 
-describe("auth commands", () => {
+describe.sequential("auth commands", () => {
 	it("auth set / get / logout", async () => {
 		const set = await runCli(["auth", "set", "  sk-abcdef123456  "]);
 		expect(set.payload.result).toEqual({

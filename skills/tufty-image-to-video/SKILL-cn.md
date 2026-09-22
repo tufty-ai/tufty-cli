@@ -1,8 +1,8 @@
 ---
 name: tufty-image-to-video
-version: 1.1.0
+version: 1.1.1
 description: "图转视频（tufty.ai）：把一张时尚、宠物或商品图片变成可分享的短视频（5 或 10 秒；9:16、1:1、16:9）。适用于让照片动起来、图片生成视频、制作社媒短视频。 Image to video on tufty.ai: animate a single fashion, pet or product photo into a short shareable video clip (5 or 10 seconds; 9:16, 1:1 or 16:9). Use when the user wants to make a photo move, turn a picture into a video, or create a short clip for social media."
-metadata: {"clawdbot":{"emoji":"🎬","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.0","installAlternative":"npx @tufty/cli@1.1.0","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"当调用此技能时，可以使用 tufty image-to-video -h 查看帮助信息。"}}
+metadata: {"clawdbot":{"emoji":"🎬","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.1","installAlternative":"npx @tufty/cli@1.1.1","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"当调用此技能时，可以使用 tufty image-to-video -h 查看帮助信息。"}}
 ---
 
 # 图转视频 Image to Video
@@ -58,16 +58,16 @@ tufty auth set YOUR_API_KEY
 - **官网**: [tufty.ai](https://tufty.ai)
 - **源码**: [github.com/tufty-ai/tufty-cli](https://github.com/tufty-ai/tufty-cli)（AGPL-3.0-or-later 许可）
 - **维护者**: tufty.ai
-- **npm 包名**: `@tufty/cli`（本技能 install 字段固定到 `1.1.0` 版本）
+- **npm 包名**: `@tufty/cli`（本技能 install 字段固定到 `1.1.1` 版本）
 - **配置文件**: `~/.tufty/config.json`
 
 不想全局安装的话，可以按需运行：
 
 ```bash
-npx @tufty/cli@1.1.0 <command>
+npx @tufty/cli@1.1.1 <command>
 ```
 
-如需全局安装，`metadata.clawdbot.install` 已固定版本：`npm install -g @tufty/cli@1.1.0`。
+如需全局安装，`metadata.clawdbot.install` 已固定版本：`npm install -g @tufty/cli@1.1.1`。
 
 ## 工作原理
 

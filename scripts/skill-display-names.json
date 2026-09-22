@@ -2,11 +2,6 @@
 	"_comment": "ClawHub 技能的中文 displayName 映射（slug -> \"<中文> <English>\"）。发布必须用 `clawhub publish --name`（scripts/publish-display-names.mjs）；`clawhub sync` 没有 --name 参数，会把 displayName 重算成 slug 的 Title Case，中文名全丢。新增工具必须先在这里登记。",
 	"names": {
 		"tufty-pet-dressup": "宠物换装 Pet Dress-Up",
-		"tufty-background-swap": "场景替换 Scene Swap",
-		"tufty-flat-to-3d": "平铺转3D Flat to 3D",
-		"tufty-image-to-video": "图转视频 Image to Video",
-		"tufty-product-promo": "商品短片 Product Promo Video",
-		"tufty-motion-control": "运镜控制 Motion Control",
-		"tufty-replace-elements": "萌宠带货 Pet Promos"
+		"tufty-image-to-video": "图转视频 Image to Video"
 	}
 }

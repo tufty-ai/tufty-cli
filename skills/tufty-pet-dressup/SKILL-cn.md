@@ -1,8 +1,8 @@
 ---
 name: tufty-pet-dressup
-version: 1.1.0
+version: 1.1.1
 description: "宠物换装（tufty.ai）：把任意服饰（毛衣、卫衣、雨衣、节日装）穿到猫狗照片上，生成逼真的上身效果图，不用约拍。适用于给宠物试衣服、预览宠物穿搭、制作宠物服装电商图。 Pet dress-up on tufty.ai: put any garment (sweater, hoodie, raincoat, costume) onto a photo of a dog or cat and get realistic try-on images without a photoshoot. Use when the user wants to dress up a pet, preview how clothing looks on their pet, or create pet apparel product shots."
-metadata: {"clawdbot":{"emoji":"🐶","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.0","installAlternative":"npx @tufty/cli@1.1.0","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"当调用此技能时，可以使用 tufty pet-dressup -h 查看帮助信息。"}}
+metadata: {"clawdbot":{"emoji":"🐶","requires":{"bins":["npm","npx"]},"install":"npm install -g @tufty/cli@1.1.1","installAlternative":"npx @tufty/cli@1.1.1","homepage":"https://tufty.ai","source":"https://github.com/tufty-ai/tufty-cli","author":"tufty.ai","license":"AGPL-3.0-or-later","npm":"https://www.npmjs.com/package/@tufty/cli","configLocation":"~/.tufty/config.json","apiEndpoints":["tufty.ai","static.tufty.ai"]},"openclaw":{"systemPrompt":"当调用此技能时，可以使用 tufty pet-dressup -h 查看帮助信息。"}}
 ---
 
 # 宠物换装 Pet Dress-Up
@@ -59,16 +59,16 @@ tufty auth set YOUR_API_KEY
 - **官网**: [tufty.ai](https://tufty.ai)
 - **源码**: [github.com/tufty-ai/tufty-cli](https://github.com/tufty-ai/tufty-cli)（AGPL-3.0-or-later 许可）
 - **维护者**: tufty.ai
-- **npm 包名**: `@tufty/cli`（本技能 install 字段固定到 `1.1.0` 版本）
+- **npm 包名**: `@tufty/cli`（本技能 install 字段固定到 `1.1.1` 版本）
 - **配置文件**: `~/.tufty/config.json`
 
 不想全局安装的话，可以按需运行：
 
 ```bash
-npx @tufty/cli@1.1.0 <command>
+npx @tufty/cli@1.1.1 <command>
 ```
 
-如需全局安装，`metadata.clawdbot.install` 已固定版本：`npm install -g @tufty/cli@1.1.0`。
+如需全局安装，`metadata.clawdbot.install` 已固定版本：`npm install -g @tufty/cli@1.1.1`。
 
 ## 工作原理
 
@@ -78,7 +78,7 @@ npx @tufty/cli@1.1.0 <command>
 - 每张输入图都会先做**自动抠图，每张消耗 1 积分**。加 `--no-cutout` 可跳过，直接使用上传的原图。
 - 随后 CLI 把任务提交到 `tufty.ai`，每 3 秒轮询一次直到完成（最长 `--timeout`，默认 900 秒）。`--no-wait` 会立即返回 `runId`。
 - 生成的成品托管在 `static.tufty.ai`；`--save <dir>` 可下载到本地。
-- 价格：每张成品积分：low=6, medium=18, high=49。总价 = 画质单价 x（商品数 x 模特数）x `--count`，另加每张抠图输入图 1 积分。`--dry-run` 只打印请求内容和预估积分，不上传、不扣费。
+- 价格：每张成品积分：low=6, medium=18, high=49, xhigh=71, max=94。总价 = 画质单价 x（商品数 x 模特数）x `--count`，另加每张抠图输入图 1 积分。`--dry-run` 只打印请求内容和预估积分，不上传、不扣费。
 
 API 密钥只会发送给 `tufty.ai`，不会附加到存储上传或下载请求上。完整服务条款见 [tufty.ai](https://tufty.ai)。
 
@@ -98,10 +98,12 @@ Options:
   --product <file|url...>  商品图：本地路径、data: URL 或 http(s) 地址。传多件商品会逐件生成；同一件商品的多张图（最多 4 张）用 "+" 连接（front.jpg+back.jpg）。至少
                            1 件。
   --model <file|url...>    模特图（宠物、人物或主体）：本地路径、data: URL 或 http(s) 地址。每个模特会和每件商品两两配对。至少 1 张。
-  --quality <id>           画质档位；每张成品消耗积分：low=6, medium=18, high=49 (choices: "low", "medium", "high", default: "low")
+  --quality <id>           画质档位；每张成品消耗积分：low=6, medium=18, high=49, xhigh=71, max=94 (choices: "low", "medium", "high",
+                           "xhigh", "max", default: "low")
   --ratio <id>             画面比例；auto 由模型决定（1:1=1024x1024, 3:4=1024x1536, 9:16=1024x1536） (choices: "auto", "1:1",
                            "3:4", "9:16", default: "auto")
   --count <n>              每组商品×模特配对生成的张数 (choices: "1", "2", "3", "4", default: "1")
+  --enhance                启用工具自带的提示词增强
   --notes <text>           本次生成的补充说明（自由文本，最多 2000 字）
   --no-cutout              跳过输入图片的自动抠图（每张省 1 积分）
   --dry-run                只校验输入并打印请求载荷和积分预估；不上传、不扣费

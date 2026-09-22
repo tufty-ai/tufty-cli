@@ -173,6 +173,12 @@ for (const dirName of dirs) {
 			const msg = String(e.message || e);
 			if (/already exists/i.test(msg)) {
 				version = bumpPatch(version);
+			} else if (/must be at least \d+ days old/i.test(msg)) {
+				// 账号太新（ClawHub 要求 GitHub 账号满 14 天）。报错里也带着 "reset in 1s"，
+				// 不先挡住就会被下面当成限流，每个技能空等 6 分钟。等多久都不会好，直接停。
+				console.log(`FAIL  ${slug}  ${msg}`);
+				console.log("发布账号未满 ClawHub 的账号年龄要求，全部停止。");
+				process.exit(1);
 			} else if (/rate limit|reset in|429/i.test(msg)) {
 				console.log(`WAIT  ${slug}  限流，等 60s`);
 				await sleep(60_000);
